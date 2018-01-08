@@ -470,6 +470,7 @@ class Router(object):
 
     def match(self, environ):
         """ Return a (target, url_args) tuple or raise HTTPError(400/404/405). """
+        # shellbye_read 这里匹配请求的路径与系统自带的route
         verb = environ['REQUEST_METHOD'].upper()
         path = environ['PATH_INFO'] or '/'
 
@@ -913,6 +914,7 @@ class Bottle(object):
             Any additional keyword arguments are stored as route-specific
             configuration and passed to plugins (see :meth:`Plugin.apply`).
         """
+        # shellbye_read 路由的定向都经过了这里
         if callable(path): path, callback = None, path
         plugins = makelist(apply)
         skiplist = makelist(skip)
@@ -994,6 +996,7 @@ class Bottle(object):
                     environ['route.handle'] = route
                     environ['bottle.route'] = route
                     environ['route.url_args'] = args
+                    # shellbye_read 这里调用上面找到的route去执行，并返回结果
                     out = route.call(**args)
                     break
                 except HTTPResponse as E:
@@ -1127,6 +1130,7 @@ class Bottle(object):
 
     def __call__(self, environ, start_response):
         """ Each instance of :class:'Bottle' is a WSGI application. """
+        # shellbye_read server处理过的请求进入bottle的入口
         return self.wsgi(environ, start_response)
 
     def __enter__(self):
@@ -3161,6 +3165,9 @@ def make_default_app_wrapper(name):
 
     @functools.wraps(getattr(Bottle, name))
     def wrapper(*a, **ka):
+        # shellbye_read 这里的name即装饰器的名字，
+        # 然后去bottle的实例里面查找对应的方法，
+        # 即get请求找get方法，route请求，找route方法
         return getattr(app(), name)(*a, **ka)
 
     return wrapper
