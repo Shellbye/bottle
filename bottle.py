@@ -1099,6 +1099,8 @@ class Bottle(object):
         return new_iter
 
     def wsgi(self, environ, start_response):
+        # shellbye_read 这里实现了wsgi的接口
+        # https://www.python.org/dev/peps/pep-3333/
         """ The bottle WSGI-interface. """
         try:
             out = self._cast(self._handle(environ))
@@ -3251,6 +3253,7 @@ class WSGIRefServer(ServerAdapter):
                                handler_cls)
         self.port = self.srv.server_port  # update port actual port (0 means random)
         try:
+            # shellbye_read 这里开始等待请求进入, 比如sockketserver里面的第219行
             self.srv.serve_forever()
         except KeyboardInterrupt:
             self.srv.server_close()  # Prevent ResourceWarning: unclosed socket
