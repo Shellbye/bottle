@@ -919,6 +919,9 @@ class Bottle(object):
         plugins = makelist(apply)
         skiplist = makelist(skip)
 
+        # shellbye_read 这里为什么还有一个decorator？？？
+        # shellbye_read #这里的decorator是为了用http的方法来route，
+        # 下面的这个decorator才是真正的把url的配置信息加入的实例中
         def decorator(callback):
             if isinstance(callback, basestring): callback = load(callback)
             for rule in makelist(path) or yieldroutes(callback):
@@ -3162,7 +3165,7 @@ def auth_basic(check, realm="private", text="Access denied"):
 
 def make_default_app_wrapper(name):
     """ Return a callable that relays calls to the current default app. """
-
+    # shellbye_read https://stackoverflow.com/questions/308999/what-does-functools-wraps-do
     @functools.wraps(getattr(Bottle, name))
     def wrapper(*a, **ka):
         # shellbye_read 这里的name即装饰器的名字，
